@@ -44,6 +44,10 @@ trait BloomFilter[T] {
   def bits: Int
 
   protected def hashIndices(item: T): Seq[Int] = {
+    // TODO(achen): Because the default Scala MurmurHash3 is 32bit, the strategy here to
+    // map the result of the hash to bits can end up significantly biasing towards the
+    // beginning of the array if the size of the bloom filter gets closer to INT_MAX.
+    // Changing to a 64-bit or 128-bit hash function can help alleviate this effect.
     (1 to numHashes).map { index =>
       abs(hashable.hash(item, index)) % bits
     }.map(_.toInt)
