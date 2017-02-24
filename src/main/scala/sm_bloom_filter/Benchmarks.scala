@@ -3,7 +3,7 @@ package sm_bloom_filter
 object SimpleBenchmarks {
   def log(m: String): Unit = System.out.println(m)
 
-  def time[V](execution: => Unit): Unit = {
+  def time(execution: => Unit): Unit = {
     val startTime = System.nanoTime()
     val result = execution
     val endTime = System.nanoTime()
