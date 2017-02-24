@@ -6,30 +6,43 @@ import scala.collection.mutable
 import scala.util.hashing.MurmurHash3
 
 object BloomFilter {
-  def numHashes(fpProb: Double): Int = {
-    require(fpProb > 0 && fpProb <= 100)
-    // From https://en.wikipedia.org/wiki/Bloom_filter#Optimal_number_of_hash_functions
-    ceil(-1 * log(fpProb) / log(2)).toInt
-  }
-
-  def bits(numItems: Long, fpProb: Double): Int = {
-    require(fpProb > 0 && fpProb <= 100)
-    // From https://en.wikipedia.org/wiki/Bloom_filter#Optimal_number_of_hash_functions
-    ceil((-1 * numItems * log(fpProb)) / (log(2) * log(2))).toInt
-  }
-
+  /**
+    * Creates a Bloom filter using Immutable data structures.
+    *
+    * numItems: The number of items expected to be inserted in the Bloom filter.
+    * falsePositiveProbability: The desired false positive probability. Must be 0 < p <= 100.
+    * hashable: A hashing definition on type T. See Hashable.scala.
+    */
   def immutable[T](numItems: Long, falsePositiveProbability: Double)(implicit hashable: Hashable[T]): BloomFilter[T] = {
     val numHashes = BloomFilter.numHashes(falsePositiveProbability)
     val bits = BloomFilter.bits(numItems, falsePositiveProbability)
 
     new ImmutableBloomFilter(numHashes, bits, BitSet(bits))(hashable)
   }
-
+  /**
+    * Creates a Bloom filter using Mutable data structures. Usually faster.
+    * 
+    * numItems: The number of items expected to be inserted in the Bloom filter.
+    * falsePositiveProbability: The desired false positive probability. Must be 0 < p <= 100.
+    * hashable: A hashing definition on type T. See Hashable.scala.
+    */
   def mutable[T](numItems: Long, falsePositiveProbability: Double)(implicit hashable: Hashable[T]): BloomFilter[T] = {
     val numHashes = BloomFilter.numHashes(falsePositiveProbability)
     val bits = BloomFilter.bits(numItems, falsePositiveProbability)
 
     new MutableBloomFilter(numHashes, bits)(hashable)
+  }
+
+  private def numHashes(fpProb: Double): Int = {
+    require(fpProb > 0 && fpProb <= 100)
+    // From https://en.wikipedia.org/wiki/Bloom_filter#Optimal_number_of_hash_functions
+    ceil(-1 * log(fpProb) / log(2)).toInt
+  }
+
+  private def bits(numItems: Long, fpProb: Double): Int = {
+    require(fpProb > 0 && fpProb <= 100)
+    // From https://en.wikipedia.org/wiki/Bloom_filter#Optimal_number_of_hash_functions
+    ceil((-1 * numItems * log(fpProb)) / (log(2) * log(2))).toInt
   }
 }
 
