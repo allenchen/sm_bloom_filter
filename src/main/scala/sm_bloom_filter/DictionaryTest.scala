@@ -14,6 +14,7 @@ object DictionaryTest {
     val dictionary = Dictionary.approximateDictionary(wordlistPath, 0.001)(wordlistCodec)
     log(s"Approximate Dictionary Size: ${dictionary.size}")
 
+    truePositiveTest(wordlistPath: String, wordlistCodec, dictionary)
     falsePositiveTest(wordlistPath, wordlistCodec, dictionary)
   }
 
@@ -23,6 +24,7 @@ object DictionaryTest {
       val result = dictionary.checkWord(word)
       require(result)
     }
+    log("True Positive Test passed.")
   }
 
   def falsePositiveTest(wordlistPath: String, wordlistCodec: Codec, dictionary: Dictionary): Unit = {

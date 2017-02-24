@@ -10,4 +10,5 @@ It implements `insert`, `contains` and `size`.
 
 `size` _approximates_ the number of elements inserted into the bloom filter based on the number of bits set in its underlying array.
 
-Initial testing benchmarks can be run with `sbt run`.
+Initial testing benchmarks can be run with `sbt run`, selecting sm_bloom_filter.SimpleBenchmarks.
+A toy example exercising the bloom filter as a Dictionary can be found by selecting sm_bloom_filter.DictionaryTest.
