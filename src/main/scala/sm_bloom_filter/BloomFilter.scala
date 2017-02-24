@@ -3,7 +3,6 @@ package sm_bloom_filter
 import math.{abs, ceil, log}
 import scala.collection.BitSet
 import scala.collection.mutable
-import scala.util.hashing.MurmurHash3
 
 object BloomFilter {
   /**
