@@ -35,7 +35,7 @@ object BloomFilter {
 
 trait BloomFilter[T] {
   def insert(item: T): BloomFilter[T]
-  def contains(item: T): Boolean // Approximate
+  def contains(item: T): Boolean // Is not precise - may return false positives.
   def size: Long = {
     // Size is approximate.
     // From https://en.wikipedia.org/wiki/Bloom_filter#Approximating_the_number_of_items_in_a_Bloom_filter
@@ -64,31 +64,31 @@ trait BloomFilter[T] {
 }
 
 case class MutableBloomFilter[T](numHashes: Int, bits: Int)(implicit hashableParam: Hashable[T]) extends BloomFilter[T] {
-  val bitSet = mutable.BitSet(bits)
+  private val bitSet = mutable.BitSet(bits)
 
-  def hashable = hashableParam
-  def underlyingArray = bitSet
+  override def hashable = hashableParam
+  override def underlyingArray = bitSet
 
-  def insert(item: T): BloomFilter[T] = {
+  override def insert(item: T): BloomFilter[T] = {
     hashIndices(item).foreach(bitSet.add(_))
     this
   }
 
-  def contains(item: T): Boolean = {
+  override def contains(item: T): Boolean = {
     hashIndices(item).forall(bitSet.contains(_))
   }
 }
 
 case class ImmutableBloomFilter[T](numHashes: Int, bits: Int, bitSet: BitSet)(implicit hashableParam: Hashable[T]) extends BloomFilter[T] {
 
-  def hashable = hashableParam
-  def underlyingArray = bitSet
+  override def hashable = hashableParam
+  override def underlyingArray = bitSet
 
-  def insert(item: T): BloomFilter[T] = {
+  override def insert(item: T): BloomFilter[T] = {
     new ImmutableBloomFilter[T](numHashes, bits, bitSet ++ hashIndices(item))(hashable)
   }
 
-  def contains(item: T): Boolean = {
+  override def contains(item: T): Boolean = {
     hashIndices(item).forall(bitSet.contains(_))
   }
 }
