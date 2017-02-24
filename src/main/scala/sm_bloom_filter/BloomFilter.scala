@@ -7,13 +7,13 @@ import scala.util.hashing.MurmurHash3
 
 object BloomFilter {
   def numHashes(fpProb: Double): Int = {
-    require(fpProb > 0)
+    require(fpProb > 0 && fpProb <= 100)
     // From https://en.wikipedia.org/wiki/Bloom_filter#Optimal_number_of_hash_functions
     ceil(-1 * log(fpProb) / log(2)).toInt
   }
 
   def bits(numItems: Long, fpProb: Double): Int = {
-    require(fpProb > 0)
+    require(fpProb > 0 && fpProb <= 100)
     // From https://en.wikipedia.org/wiki/Bloom_filter#Optimal_number_of_hash_functions
     ceil((-1 * numItems * log(fpProb)) / (log(2) * log(2))).toInt
   }
